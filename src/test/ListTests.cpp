@@ -10,6 +10,16 @@
     not std allocator
     std::list<char> sa(0,0);
 */
+template<class Container>
+void test_list_size(Container& cnt, std::string filepath)
+{
+	std::ofstream out(filepath);
+	if (!out.is_open())
+		throw std::runtime_error("cant write in file!\n");
+	out << "size: " << cnt.size() << std::endl;
+	out.close();
+}
+
 
 template<class Container>
 void test_iter_constructors(Container& cnt, std::string filepath)
@@ -315,7 +325,7 @@ void test_assign_operator(Container& cnt, std::string filepath, typename Contain
         other.push_back(element);
     other = cnt;
     typename Container::iterator it = other.begin();
-    while (it != cnt.end())
+    while (it != other.end())
     {
         out << *it << std::endl;
         ++it;
@@ -324,7 +334,7 @@ void test_assign_operator(Container& cnt, std::string filepath, typename Contain
     Container other2;
     other = other2;
     it = other.begin();
-    while (it != cnt.end())
+    while (it != other.end())
     {
         out << *it << std::endl;
         ++it;
@@ -333,7 +343,7 @@ void test_assign_operator(Container& cnt, std::string filepath, typename Contain
     Container other3;
     other = other3;
     it = other.begin();
-    while (it != cnt.end())
+    while (it != other.end())
     {
         out << *it << std::endl;
         ++it;
@@ -344,11 +354,57 @@ void test_assign_operator(Container& cnt, std::string filepath, typename Contain
         other4.push_back(element);
     other = other4;
     it = other.begin();
-    while (it != cnt.end())
+    while (it != other.end())
     {
         out << *it << std::endl;
         ++it;
     }
+}
+
+template<class Container>
+void test_resize(Container& cnt, std::string filepath, typename Container::value_type element)
+{
+	std::ofstream out(filepath);
+	if (!out.is_open())
+		throw std::runtime_error("cant write in file!\n");
+
+	cnt.resize(3);
+	typename Container::iterator it = cnt.begin();
+	while (it != cnt.end())
+	{
+		out << *it << std::endl;
+		++it;
+	}
+
+	cnt.resize(100, element);
+	it = cnt.begin();
+	while (it != cnt.end())
+	{
+		out << *it << std::endl;
+		++it;
+	}
+
+	cnt.resize(1);
+	it = cnt.begin();
+	while (it != cnt.end())
+	{
+		out << *it << std::endl;
+		++it;
+	}
+
+	cnt.resize(1000);
+	while (it != cnt.end())
+	{
+		out << *it << std::endl;
+		++it;
+	}
+
+	cnt.resize(0);
+	while (it != cnt.end())
+	{
+		out << *it << std::endl;
+		++it;
+	}
 }
 
 void testList()
@@ -356,6 +412,16 @@ void testList()
 	std::string stdFilePath = "List_std.txt";
 	std::string ftFilePath = "List_ft.txt";
 	std::cout << "list: " << std::endl;
+
+	std::list<char> stdEmptyChar;
+	ft::list<char> ftEmptyChar;
+
+	std::list<int> stdEmptyInt;
+	ft::list<int> ftEmptyInt;
+
+	std::list<std::string> stdEmptyString;
+	ft::list<std::string> ftEmptyString;
+
 
 	std::list<char> sList;
 	sList.push_back('f');
@@ -395,21 +461,24 @@ void testList()
 	ftStringList.push_back("String");
 	ftStringList.push_back("List");
 
-	TestClass t1(42, '*');
-	TestClass t2;
-	TestClass t3(21, '?');
-	TestClass t4(99, 'Z');
-	std::list<TestClass>	stdClassList;
-	stdClassList.push_back(t1);
-	stdClassList.push_back(t2);
-	stdClassList.push_back(t3);
-	stdClassList.push_back(t4);
 
-	ft::list<TestClass>	ftClassList;
-	ftClassList.push_back(t1);
-	ftClassList.push_back(t2);
-	ftClassList.push_back(t3);
-	ftClassList.push_back(t4);
+	std::cout << "\tEmpty list:" << std::endl;
+	{
+		std::cout << "\t\tsize:" << std::endl;
+		std::cout << "\t\t\tchar:";
+		test_list_size(stdEmptyChar, stdFilePath);
+		test_list_size(ftEmptyChar, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_list_size(stdEmptyInt, stdFilePath);
+		test_list_size(ftEmptyInt, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_list_size(stdEmptyString, stdFilePath);
+		test_list_size(ftEmptyString, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
 
 	std::cout << "\tIterator:" << std::endl;
 	{
@@ -427,10 +496,6 @@ void testList()
 		test_iter_constructors(sStringList, stdFilePath);
 		test_iter_constructors(ftStringList, ftFilePath);
 		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tcustom class:";
-		test_iter_constructors(stdClassList, stdFilePath);
-		test_iter_constructors(ftClassList, ftFilePath);
-		compareFiles(stdFilePath, ftFilePath);
 		std::cout << std::endl;
 		//operators
 		std::cout << "\t\toperators:" << std::endl;
@@ -445,10 +510,6 @@ void testList()
 		std::cout << "\tstring:";
 		test_iter_operators<std::list<std::string> >(sStringList, stdFilePath, "ft");
 		test_iter_operators<ft::list<std::string> >(ftStringList, ftFilePath, "ft");
-		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tcustom class:";
-		test_iter_operators<std::list<TestClass> >(stdClassList, stdFilePath, t1);
-		test_iter_operators<ft::list<TestClass> >(ftClassList, ftFilePath, t1);
 		compareFiles(stdFilePath, ftFilePath);
 		std::cout << std::endl;
 	}
@@ -469,10 +530,6 @@ void testList()
 		test_citer_constructors(sStringList, stdFilePath);
 		test_citer_constructors(ftStringList, ftFilePath);
 		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tcustom class:";
-		test_citer_constructors(stdClassList, stdFilePath);
-		test_citer_constructors(ftClassList, ftFilePath);
-		compareFiles(stdFilePath, ftFilePath);
 		std::cout << std::endl;
 		//operators
 		std::cout << "\t\toperators:" << std::endl;
@@ -487,10 +544,6 @@ void testList()
 		std::cout << "\tstring:";
 		test_const_iter_operators<std::list<std::string> >(sStringList, stdFilePath);
 		test_const_iter_operators<ft::list<std::string> >(ftStringList, ftFilePath);
-		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tcustom class:";
-		test_const_iter_operators<std::list<TestClass> >(stdClassList, stdFilePath);
-		test_const_iter_operators<ft::list<TestClass> >(ftClassList, ftFilePath);
 		compareFiles(stdFilePath, ftFilePath);
 		std::cout << std::endl;
 	}
@@ -511,10 +564,6 @@ void testList()
 		test_riter_constructors(sStringList, stdFilePath);
 		test_riter_constructors(ftStringList, ftFilePath);
 		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tcustom class:";
-		test_riter_constructors(stdClassList, stdFilePath);
-		test_riter_constructors(ftClassList, ftFilePath);
-		compareFiles(stdFilePath, ftFilePath);
 		std::cout << std::endl;
 		//operators
 		std::cout << "\t\toperators:" << std::endl;
@@ -529,10 +578,6 @@ void testList()
 		std::cout << "\tstring:";
 		test_riter_operators<std::list<std::string> >(sStringList, stdFilePath, "ft");
 		test_riter_operators<ft::list<std::string> >(ftStringList, ftFilePath, "ft");
-		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tcustom class:";
-		test_riter_operators<std::list<TestClass> >(stdClassList, stdFilePath, t1);
-		test_riter_operators<ft::list<TestClass> >(ftClassList, ftFilePath, t1);
 		compareFiles(stdFilePath, ftFilePath);
 		std::cout << std::endl;
 	}
@@ -553,10 +598,6 @@ void testList()
 		test_rciter_constructors(sStringList, stdFilePath);
 		test_rciter_constructors(ftStringList, ftFilePath);
 		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tcustom class:";
-		test_rciter_constructors(stdClassList, stdFilePath);
-		test_rciter_constructors(ftClassList, ftFilePath);
-		compareFiles(stdFilePath, ftFilePath);
 		std::cout << std::endl;
 		//operators
 		std::cout << "\t\toperators:" << std::endl;
@@ -572,16 +613,11 @@ void testList()
 		test_rconst_iter_operators<std::list<std::string> >(sStringList, stdFilePath);
 		test_rconst_iter_operators<ft::list<std::string> >(ftStringList, ftFilePath);
 		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tcustom class:";
-		test_rconst_iter_operators<std::list<TestClass> >(stdClassList, stdFilePath);
-		test_rconst_iter_operators<ft::list<TestClass> >(ftClassList, ftFilePath);
-		compareFiles(stdFilePath, ftFilePath);
 		std::cout << std::endl;
 	}
 
     std::cout << "\toperator=:" << std::endl;
     {
-        TestClass t;
         std::cout << "\t\tchar:";
         test_assign_operator(sList, stdFilePath, 'p');
         test_assign_operator(ftList, ftFilePath, 'p');
@@ -594,10 +630,31 @@ void testList()
         test_assign_operator(sStringList, stdFilePath, "skrskrskr");
         test_assign_operator(ftStringList, ftFilePath, "skrskrskr");
         compareFiles(stdFilePath, ftFilePath);
-        std::cout << "\tcustom class:";
-        test_assign_operator(stdClassList, stdFilePath, t);
-        test_assign_operator(ftClassList, ftFilePath, t);
-        compareFiles(stdFilePath, ftFilePath);
         std::cout << std::endl;
     }
+
+	std::cout << "\tresize:" << std::endl;
+	{
+		std::list<char> sChar(5, 'a');
+		std::list<int> sInt(5, 42);
+		std::list<std::string> sString(5, "asshole");
+
+		ft::list<char> ftChar(5, 'a');
+		ft::list<int> ftInt(5, 42);
+		ft::list<std::string> ftString (5, "asshole");
+
+		std::cout << "\t\tchar:";
+		test_resize(sChar, stdFilePath, 'q');
+		test_resize(ftChar, ftFilePath, 'q');
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\t\tint:";
+		test_resize(sInt, stdFilePath, 42);
+		test_resize(ftInt, ftFilePath, 42);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\t\tstring:";
+		test_resize(sString, stdFilePath, "not asshole");
+		test_resize(ftString, ftFilePath, "not asshole");
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
 }

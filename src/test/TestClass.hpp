@@ -7,12 +7,10 @@ class TestClass {
 public:
     int intValue;
     char charValue;
-    int *intArr;
 
     TestClass() {
         intValue = 0;
         charValue = ' ';
-        intArr = new int[10];
     }
 
     TestClass(int i, char c) {
@@ -22,16 +20,13 @@ public:
 
     virtual ~TestClass()
     {
-        delete[] intArr;
     }
 
     TestClass(TestClass &other)
     {
         intValue = other.intValue;
         charValue = other.charValue;
-        intArr = new int[10];
-        for(int i = 0; i < 10; i++)
-            intArr[i] = other.intArr[i];
+
     }
 	friend std::ostream& operator<<(std::ostream& os, const TestClass& t)
 	{
