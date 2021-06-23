@@ -1,6 +1,9 @@
 #ifndef FT_CONTAINERS_CONSTREVERSEITERATOR_HPP
 #define FT_CONTAINERS_CONSTREVERSEITERATOR_HPP
-template <class Iter>
+
+#include "reversIterator.hpp"
+
+template <class Iter, class ptr>
 class ConstReverseIterator
 {
 public:
@@ -12,9 +15,9 @@ public:
 
 	ConstReverseIterator(const ConstReverseIterator& other)	: _base(other._base)	{}
 
-	ConstReverseIterator(const ReverseIterator<Iter>& other) : _base(other.get_base())	{}
+	ConstReverseIterator(const ReverseIterator<Iter, ptr>& other) : _base(other.get_base())	{}
 
-	ConstReverseIterator(typename Iter::node_type *p)
+	ConstReverseIterator(ptr p)
 	{
 		Iter tmp(p);
 		_base = tmp;
@@ -29,7 +32,7 @@ public:
 		return *this;
 	}
 
-	const ConstReverseIterator& operator=(const ReverseIterator<Iter>& rh)
+	const ConstReverseIterator& operator=(const ReverseIterator<Iter, ptr>& rh)
 	{
 		this->_base = rh.get_base();
 		return *this;

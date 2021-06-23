@@ -182,8 +182,8 @@ public:
 	typedef typename Alloc::const_pointer const_pointer;
 	typedef ListIterator<T, _node> iterator;
 	typedef ConstListIterator<T, _node> const_iterator;
-	typedef ReverseIterator<iterator> reverse_iterator;
-	typedef ConstReverseIterator<iterator> const_reverse_iterator;
+	typedef ReverseIterator<iterator, _node*> reverse_iterator;
+	typedef ConstReverseIterator<iterator, _node*> const_reverse_iterator;
 
 	//*****************Constructors*****************//
 	/**

@@ -1,7 +1,7 @@
 
 #ifndef FT_CONTAINERS_REVERSITERATOR_HPP
 #define FT_CONTAINERS_REVERSITERATOR_HPP
-template <class Iter>
+template <class Iter, class ptr>
 class ReverseIterator
 {
 public:
@@ -13,7 +13,7 @@ public:
 
 	ReverseIterator(const ReverseIterator& other)	: _base(other._base)	{}
 
-	ReverseIterator(typename Iter::node_type *p)
+	ReverseIterator(ptr p)
 	{
 		Iter tmp(p);
 		_base = tmp;
