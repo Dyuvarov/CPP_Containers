@@ -289,11 +289,9 @@ public:
 	void insert( iterator pos, size_type count, const T& value )
 	{
 		size_type index = pos.get_p() - _data;
-		if (_size + count >= _capacity)
-			reserve(_capacity * 2);
-		moveElements(index, count);
+		moveRight(index, count);
 		_data[index] = value;
-		++_size;
+		_size += count;
 	}
 
 	template< class InputIt >
@@ -304,21 +302,60 @@ public:
 		size_type count = 0;
 		for (InputIt tmpIt = InputIt(pos); tmpIt != last; tmpIt++)
 			++count;
-		if (_size + count >= _capacity)
-			reserve(_capacity * 2);
-		moveElements(index, count);
+		moveRight(index, count);
 		for (; first != last; ++first, ++index)
 		{
 			_data[index] = *first;
 			++first;
 			++index;
 		}
+		_size += count;
+	}
+
+	iterator erase( iterator pos )
+	{
+		iterator nextIt = iterator (pos);
+		nextIt++;
+		return (erase(pos, nextIt))
+	}
+
+	iterator erase( iterator first, iterator last )
+	{
+		size_type count = 0;
+		size_type index = first.get_p() - _data;
+		for (iterator tmpIt = iterator(first); first != last; tmpIt++)
+		{
+			_allocator.destroy(&_data[tmpIt.get_p() - _data]);
+			count++;
+		}
+		moveLeft(index, count);
+		_size -= count;
+		if (index >= _size)
+			return end();
+		else
+			return iterator (&_data[index]);
+	}
+
+	void push_back( const T& value )
+	{
+		if (_size + 1 >= _capacity)
+			reserve(_capacity * 2);
+		_data[_size] = value;
+		++_size;
 	}
 
 	void pop_back()
 	{
 		--_size;
-		_allocator.destroy(_data[_size]);
+		_allocator.destroy(&_data[_size-1]);
+	}
+
+	void resize( size_type count, T value = T() )
+	{
+		while (_size > count)
+			pop_back();
+		while (_size < count)
+			push_back(value);
 	}
 
 	void swap( vector& other )
@@ -338,6 +375,58 @@ public:
 		_size 		= tmp_size;
 		_allocator 	= tmp_allocator;
 	}
+
+	/******Non-member functions******/
+	template< class T, class Alloc >
+	friend bool operator==( const ft::vector<T,Alloc>& lhs,
+					 const ft::vector<T,Alloc>& rhs )
+	{
+		if (lhs._size != rhs._size || lhs._capacity != rhs.capacity() || lhs._allocator != rhs._allocator)
+			return false;
+		for (size_type i = 0; i < lhs._size; i++)
+		{
+			if (lhs[i] != rhs[i])
+				return false;
+		}
+		return true;
+	}
+
+	template< class T, class Alloc >
+	bool operator!=( const ft::vector<T,Alloc>& lhs,
+					 const ft::vector<T,Alloc>& rhs )
+	{
+		return !(lhs == rhs);
+	}
+
+	template< class T, class Alloc >
+	bool operator<( const ft::vector<T,Alloc>& lhs,
+					const ft::vector<T,Alloc>& rhs )
+	{
+		return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
+
+	template< class T, class Alloc >
+	bool operator>( const std::vector<T,Alloc>& lhs,
+					const std::vector<T,Alloc>& rhs )
+	{
+		return (lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()));
+	}
+
+	template< class T, class Alloc >
+	bool operator<=( const ft::vector<T,Alloc>& lhs,
+					 const ft::vector<T,Alloc>& rhs )
+	{
+		return !(lhs > rhs);
+	}
+
+	template< class T, class Alloc >
+	bool operator>=( const std::vector<T,Alloc>& lhs,
+					 const std::vector<T,Alloc>& rhs )
+	{
+		return !(lhs < rhs);
+	}
+
+
 
 private:
 	pointer			_data;
@@ -384,10 +473,18 @@ private:
 			_data[i] = value;
 	}
 
-	void moveElements(size_type index, size_type count)
+	void moveRight(size_type index, size_type count)
 	{
-		for (size_type i = _size-1; i <= index; i++)
+		if (_size + count >= _capacity)
+			reserve(_capacity * 2);
+		for (size_type i = _size-1; i >= index; i++)
 			_data[i+count] = _data[i];
+	}
+
+	void moveLeft(size_type index, size_type count)
+	{
+		for (; index < _size; i++)
+			_data[i-count] = _data[i];
 	}
 };
 }
