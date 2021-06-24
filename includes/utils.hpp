@@ -26,6 +26,8 @@ bool lexicographical_compare( InputIt1 first1, InputIt1 last1,
 	{
 		if (*first1 < *first2)
 			return true;
+		else if (*first1 > *first2)
+			return false;
 		else
 		{
 			++first1;

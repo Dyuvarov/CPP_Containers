@@ -5,11 +5,7 @@
 
 int main()
 {
-	std::vector<int> vec;
-	vec.push_back(1);
-	std::vector<int>::iterator it = vec.begin();
-	--it;
-	//testList();
+	testList();
 	//while(1);
 	return 0;
 }

@@ -207,7 +207,7 @@ namespace ft {
 		/******Destructor******/
 		virtual ~vector() {
 			clear();
-			//_allocator.deallocate(_data, _capacity);
+			_allocator.deallocate(_data, _capacity);
 		}
 
 		/******Member functions******/
@@ -219,6 +219,7 @@ namespace ft {
 
 		void assign(size_type count, const T &value) {
 			clear();
+			_allocator.deallocate(_data, capacity());
 			initVector(count, _allocator);
 			fill(0, _size, value);
 		}
@@ -227,6 +228,7 @@ namespace ft {
 		void assign(InputIt first, InputIt last,
 					typename std::enable_if<std::__is_input_iterator<InputIt>::value>::type * = 0) {
 			clear();
+			_allocator.deallocate(_data, capacity());
 			initVector(first, last, _allocator);
 		}
 
@@ -306,8 +308,9 @@ namespace ft {
 		void insert(iterator pos, size_type count, const T &value) {
 			size_type index = pos.get_p() - _data;
 			moveRight(index, count);
-			_data[index] = value;
 			_size += count;
+			for (; count > 0 ; count--, index++)
+				_data[index] = value;
 		}
 
 		template<class InputIt>
@@ -320,8 +323,6 @@ namespace ft {
 			moveRight(index, count);
 			for (; first != last; ++first, ++index) {
 				_data[index] = *first;
-				++first;
-				++index;
 			}
 			_size += count;
 		}
@@ -335,11 +336,11 @@ namespace ft {
 		iterator erase(iterator first, iterator last) {
 			size_type count = 0;
 			size_type index = first.get_p() - _data;
-			for (iterator tmpIt = iterator(first); first != last; tmpIt++) {
-				//_allocator.destroy(&_data[tmpIt.get_p() - _data]);
+			for (; first != last; first++) {
+				_allocator.destroy(&_data[first.get_p() - _data]);
 				count++;
 			}
-			moveLeft(index, count);
+			moveLeft(index+count, count);
 			_size -= count;
 			if (index >= _size)
 				return end();
@@ -356,7 +357,7 @@ namespace ft {
 
 		void pop_back() {
 			--_size;
-			_allocator.destroy(&_data[_size - 1]);
+			_allocator.destroy(&_data[_size]);
 		}
 
 		void resize(size_type count, T value = T()) {

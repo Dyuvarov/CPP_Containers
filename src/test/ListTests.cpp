@@ -6,10 +6,7 @@
 #include <iostream>
 #include <list>
 
-/* Testit:
-    not std allocator
-    std::list<char> sa(0,0);
-*/
+
 template<class Container>
 void test_list_size(Container& cnt, std::string filepath)
 {

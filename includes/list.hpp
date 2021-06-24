@@ -486,20 +486,15 @@ public:
 	}
 
 	void reverse() {
-		_node *head = _end->next;
-		_node *ass = _end->prev;
-		_node *cur = head;
-		_node *prev = _end;
-		_node *next = cur->next;
-		while (cur != _end) {
-			next = cur->next;
-			cur->next = prev;
-			cur->prev = next;
-			cur = next;
-			prev = cur;
+		_node* first = _end->next;
+		_node* insertNeighbor = _end;
+		while (_end->prev != first)
+		{
+			_node* node = _end->prev;
+			deleteFromChain(node);
+			addAfter(insertNeighbor, node);
+			insertNeighbor = node;
 		}
-		_end->prev = head;
-		_end->next = ass;
 	}
 
 	void unique() {
@@ -531,7 +526,15 @@ public:
 		_node *node = _end->next;
 		while (node != _end && node->next != _end) {
 			if (node->value > node->next->value) {
-				nodeSwap(&node, &node->next);
+				_node *left = node;
+				_node *right = node->next;
+
+				right->next->prev = left;
+				left->prev->next = right;
+				right->prev = left->prev;
+				left->next = right->next;
+				left->prev = right;
+				right->next = left;
 				node = _end->next;
 			} else
 				node = node->next;
@@ -543,7 +546,15 @@ public:
 		_node *node = _end->next;
 		while (node != _end && node->next != _end) {
 			if (comp(node->next->value, node->value)) {
-				nodeSwap(&node, &node->next);
+				_node *left = node;
+				_node *right = node->next;
+
+				right->next->prev = left;
+				left->prev->next = right;
+				right->prev = left->prev;
+				left->next = right->next;
+				left->prev = right;
+				right->next = left;
 				node = _end->next;
 			} else
 				node = node->next;
