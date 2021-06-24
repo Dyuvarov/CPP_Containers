@@ -618,49 +618,51 @@ private:
 	}
 
 };
+
+	template< class T, class Alloc >
+	bool operator==( const ft::list<T,Alloc>& lhs,
+					 const ft::list<T,Alloc>& rhs )
+	{
+
+		return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+	}
+
+	template< class T, class Alloc >
+	bool operator!=( const ft::list<T,Alloc>& lhs,
+					 const ft::list<T,Alloc>& rhs )
+	{
+		return (!(lhs == rhs));
+	}
+
+	template< class T, class Alloc >
+	bool operator<( const ft::list<T,Alloc>& lhs,
+					const ft::list<T,Alloc>& rhs )
+	{
+		return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+	}
+
+	template< class T, class Alloc >
+	bool operator<=( const ft::list<T,Alloc>& lhs,
+					 const ft::list<T,Alloc>& rhs )
+	{
+		return (lhs == rhs || lhs < rhs);
+	}
+
+	template< class T, class Alloc >
+	bool operator>( const ft::list<T,Alloc>& lhs,
+					const ft::list<T,Alloc>& rhs )
+	{
+		return (rhs < lhs);
+	}
+
+	template< class T, class Alloc >
+	bool operator>=( const ft::list<T,Alloc>& lhs,
+					 const ft::list<T,Alloc>& rhs )
+	{
+		return (lhs == rhs || lhs > rhs);
+	}
 }
 
-template< class T, class Alloc >
-bool operator==( const ft::list<T,Alloc>& lhs,
-				 const ft::list<T,Alloc>& rhs )
-{
 
-	return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
-}
-
-template< class T, class Alloc >
-bool operator!=( const ft::list<T,Alloc>& lhs,
-				 const ft::list<T,Alloc>& rhs )
-{
-	return (!(lhs == rhs));
-}
-
-template< class T, class Alloc >
-bool operator<( const ft::list<T,Alloc>& lhs,
-				const ft::list<T,Alloc>& rhs )
-{
-	return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
-}
-
-template< class T, class Alloc >
-bool operator<=( const ft::list<T,Alloc>& lhs,
-				 const ft::list<T,Alloc>& rhs )
-{
-	return (lhs == rhs || lhs < rhs);
-}
-
-template< class T, class Alloc >
-bool operator>( const ft::list<T,Alloc>& lhs,
-				const ft::list<T,Alloc>& rhs )
-{
-	return (rhs < lhs);
-}
-
-template< class T, class Alloc >
-bool operator>=( const ft::list<T,Alloc>& lhs,
-				 const ft::list<T,Alloc>& rhs )
-{
-	return (lhs == rhs || lhs > rhs);
-}
 
 #endif //FT_CONTAINERS_LIST_HPP
