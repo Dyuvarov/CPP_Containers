@@ -1,14 +1,10 @@
-#include "ListTests.hpp"
-#include "TestUtils.hpp"
-#include "Outputs.hpp"
-#include "../../includes/list.hpp"
-#include "TestClass.hpp"
 #include <iostream>
-#include <list>
+#include "Tests.hpp"
 
+/*******LIST*******/
 
 template<class Container>
-void test_list_size(Container& cnt, std::string filepath)
+void test_cnt_size(Container& cnt, std::string filepath)
 {
 	std::ofstream out(filepath);
 	if (!out.is_open())
@@ -16,7 +12,6 @@ void test_list_size(Container& cnt, std::string filepath)
 	out << "size: " << cnt.size() << std::endl;
 	out.close();
 }
-
 
 template<class Container>
 void test_iter_constructors(Container& cnt, std::string filepath)
@@ -390,6 +385,7 @@ void test_resize(Container& cnt, std::string filepath, typename Container::value
 	}
 
 	cnt.resize(1000);
+	it = cnt.begin();
 	while (it != cnt.end())
 	{
 		out << *it << std::endl;
@@ -397,6 +393,39 @@ void test_resize(Container& cnt, std::string filepath, typename Container::value
 	}
 
 	cnt.resize(0);
+	it = cnt.begin();
+	while (it != cnt.end())
+	{
+		out << *it << std::endl;
+		++it;
+	}
+}
+
+template<class Container>
+void test_push_back(Container cnt, std::string filepath, typename Container::value_type value)
+{
+	std::ofstream out(filepath);
+	if (!out.is_open())
+		throw std::runtime_error("cant write in file!\n");
+
+	cnt.push_back(value);
+	typename Container::iterator it = cnt.begin();
+	while (it != cnt.end())
+	{
+		out << *it << std::endl;
+		++it;
+	}
+}
+
+template<class Container>
+void test_pop_back(Container cnt, std::string filepath)
+{
+	std::ofstream out(filepath);
+	if (!out.is_open())
+		throw std::runtime_error("cant write in file!\n");
+
+	cnt.pop_back();
+	typename Container::iterator it = cnt.begin();
 	while (it != cnt.end())
 	{
 		out << *it << std::endl;
@@ -463,16 +492,16 @@ void testList()
 	{
 		std::cout << "\t\tsize:" << std::endl;
 		std::cout << "\t\t\tchar:";
-		test_list_size(stdEmptyChar, stdFilePath);
-		test_list_size(ftEmptyChar, ftFilePath);
+		test_cnt_size(stdEmptyChar, stdFilePath);
+		test_cnt_size(ftEmptyChar, ftFilePath);
 		compareFiles(stdFilePath, ftFilePath);
 		std::cout << "\tint:";
-		test_list_size(stdEmptyInt, stdFilePath);
-		test_list_size(ftEmptyInt, ftFilePath);
+		test_cnt_size(stdEmptyInt, stdFilePath);
+		test_cnt_size(ftEmptyInt, ftFilePath);
 		compareFiles(stdFilePath, ftFilePath);
 		std::cout << "\tstring:";
-		test_list_size(stdEmptyString, stdFilePath);
-		test_list_size(ftEmptyString, ftFilePath);
+		test_cnt_size(stdEmptyString, stdFilePath);
+		test_cnt_size(ftEmptyString, ftFilePath);
 		compareFiles(stdFilePath, ftFilePath);
 		std::cout << std::endl;
 	}
@@ -480,7 +509,6 @@ void testList()
 	std::cout << "\tIterator:" << std::endl;
 	{
 		//constructors
-		std::cout << "\t\tconstructors:" << std::endl;
 		std::cout << "\t\t\tchar:";
 		test_iter_constructors(sList, stdFilePath);
 		test_iter_constructors(ftList, ftFilePath);
@@ -494,27 +522,12 @@ void testList()
 		test_iter_constructors(ftStringList, ftFilePath);
 		compareFiles(stdFilePath, ftFilePath);
 		std::cout << std::endl;
-		//operators
-		std::cout << "\t\toperators:" << std::endl;
-		std::cout << "\t\t\tchar:";
-		test_iter_operators<std::list<char> >(sList, stdFilePath, 'q');
-		test_iter_operators<ft::list<char> >(ftList, ftFilePath,'q');
-		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tint:";
-		test_iter_operators<std::list<int> >(sIntList, stdFilePath, 10);
-		test_iter_operators<ft::list<int> >(ftIntList, ftFilePath, 10);
-		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tstring:";
-		test_iter_operators<std::list<std::string> >(sStringList, stdFilePath, "ft");
-		test_iter_operators<ft::list<std::string> >(ftStringList, ftFilePath, "ft");
-		compareFiles(stdFilePath, ftFilePath);
-		std::cout << std::endl;
+
 	}
 
 	std::cout << "\tConst Iterator:" << std::endl;
 	{
 		//constructors
-		std::cout << "\t\tconstructors:" << std::endl;
 		std::cout << "\t\t\tchar:";
 		test_citer_constructors(sList, stdFilePath);
 		test_citer_constructors(ftList, ftFilePath);
@@ -528,27 +541,11 @@ void testList()
 		test_citer_constructors(ftStringList, ftFilePath);
 		compareFiles(stdFilePath, ftFilePath);
 		std::cout << std::endl;
-		//operators
-		std::cout << "\t\toperators:" << std::endl;
-		std::cout << "\t\t\tchar:";
-		test_const_iter_operators<std::list<char> >(sList, stdFilePath);
-		test_const_iter_operators<ft::list<char> >(ftList, ftFilePath);
-		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tint:";
-		test_const_iter_operators<std::list<int> >(sIntList, stdFilePath);
-		test_const_iter_operators<ft::list<int> >(ftIntList, ftFilePath);
-		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tstring:";
-		test_const_iter_operators<std::list<std::string> >(sStringList, stdFilePath);
-		test_const_iter_operators<ft::list<std::string> >(ftStringList, ftFilePath);
-		compareFiles(stdFilePath, ftFilePath);
-		std::cout << std::endl;
 	}
 
 	std::cout << "\tReverse Iterator:" << std::endl;
 	{
 		//constructors
-		std::cout << "\t\tconstructors:" << std::endl;
 		std::cout << "\t\t\tchar:";
 		test_riter_constructors(sList, stdFilePath);
 		test_riter_constructors(ftList, ftFilePath);
@@ -562,27 +559,11 @@ void testList()
 		test_riter_constructors(ftStringList, ftFilePath);
 		compareFiles(stdFilePath, ftFilePath);
 		std::cout << std::endl;
-		//operators
-		std::cout << "\t\toperators:" << std::endl;
-		std::cout << "\t\t\tchar:";
-		test_riter_operators<std::list<char> >(sList, stdFilePath, 'q');
-		test_riter_operators<ft::list<char> >(ftList, ftFilePath,'q');
-		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tint:";
-		test_riter_operators<std::list<int> >(sIntList, stdFilePath, 10);
-		test_riter_operators<ft::list<int> >(ftIntList, ftFilePath, 10);
-		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tstring:";
-		test_riter_operators<std::list<std::string> >(sStringList, stdFilePath, "ft");
-		test_riter_operators<ft::list<std::string> >(ftStringList, ftFilePath, "ft");
-		compareFiles(stdFilePath, ftFilePath);
-		std::cout << std::endl;
 	}
 
 	std::cout << "\tConst Reverse Iterator:" << std::endl;
 	{
 		//constructors
-		std::cout << "\t\tconstructors:" << std::endl;
 		std::cout << "\t\t\tchar:";
 		test_rciter_constructors(sList, stdFilePath);
 		test_rciter_constructors(ftList, ftFilePath);
@@ -594,21 +575,6 @@ void testList()
 		std::cout << "\tstring:";
 		test_rciter_constructors(sStringList, stdFilePath);
 		test_rciter_constructors(ftStringList, ftFilePath);
-		compareFiles(stdFilePath, ftFilePath);
-		std::cout << std::endl;
-		//operators
-		std::cout << "\t\toperators:" << std::endl;
-		std::cout << "\t\t\tchar:";
-		test_rconst_iter_operators<std::list<char> >(sList, stdFilePath);
-		test_rconst_iter_operators<ft::list<char> >(ftList, ftFilePath);
-		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tint:";
-		test_rconst_iter_operators<std::list<int> >(sIntList, stdFilePath);
-		test_rconst_iter_operators<ft::list<int> >(ftIntList, ftFilePath);
-		compareFiles(stdFilePath, ftFilePath);
-		std::cout << "\tstring:";
-		test_rconst_iter_operators<std::list<std::string> >(sStringList, stdFilePath);
-		test_rconst_iter_operators<ft::list<std::string> >(ftStringList, ftFilePath);
 		compareFiles(stdFilePath, ftFilePath);
 		std::cout << std::endl;
 	}
@@ -639,6 +605,233 @@ void testList()
 		ft::list<char> ftChar(5, 'a');
 		ft::list<int> ftInt(5, 42);
 		ft::list<std::string> ftString (5, "asshole");
+
+		std::cout << "\t\tchar:";
+		test_resize(sChar, stdFilePath, 'q');
+		test_resize(ftChar, ftFilePath, 'q');
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\t\tint:";
+		test_resize(sInt, stdFilePath, 42);
+		test_resize(ftInt, ftFilePath, 42);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\t\tstring:";
+		test_resize(sString, stdFilePath, "not asshole");
+		test_resize(ftString, ftFilePath, "not asshole");
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+}
+
+/*******VECTOR*******/
+
+
+void testVector()
+{
+	std::string stdFilePath = "Vector_std.txt";
+	std::string ftFilePath = "Vector_ft.txt";
+	std::cout << "vector: " << std::endl;
+
+	std::vector<char> stdEmptyChar;
+	ft::vector<char> ftEmptyChar;
+
+	std::vector<int> stdEmptyInt;
+	ft::vector<int> ftEmptyInt;
+
+	std::vector<std::string> stdEmptyString;
+	ft::vector<std::string> ftEmptyString;
+
+	std::vector<char> stdChar;
+	stdChar.push_back('f');
+	stdChar.push_back('g');
+	stdChar.push_back('a');
+	stdChar.push_back('b');
+
+	ft::vector<char> ftChar;
+	ftChar.push_back('f');
+	ftChar.push_back('g');
+	ftChar.push_back('a');
+	ftChar.push_back('b');
+
+	std::vector<int> stdInt;
+	stdInt.push_back(42);
+	stdInt.push_back(0);
+	stdInt.push_back(-999);
+	stdInt.push_back(999999999);
+
+	ft::vector<int> ftInt;
+	ftInt.push_back(42);
+	ftInt.push_back(0);
+	ftInt.push_back(-999);
+	ftInt.push_back(999999999);
+
+	std::vector<std::string> stdString;
+	stdString.push_back("Hello!");
+	stdString.push_back("");
+	stdString.push_back("I am");
+	stdString.push_back("String");
+	stdString.push_back("List");
+
+	ft::vector<std::string> ftString;
+	ftString.push_back("Hello!");
+	ftString.push_back("");
+	ftString.push_back("I am");
+	ftString.push_back("String");
+	ftString.push_back("List");
+
+	std::cout << "\tEmpty vector:" << std::endl;
+	{
+		std::cout << "\t\tsize:" << std::endl;
+		std::cout << "\t\t\tchar:";
+		test_cnt_size(stdEmptyChar, stdFilePath);
+		test_cnt_size(ftEmptyChar, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_cnt_size(stdEmptyInt, stdFilePath);
+		test_cnt_size(ftEmptyInt, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_cnt_size(stdEmptyString, stdFilePath);
+		test_cnt_size(ftEmptyString, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tIterator:" << std::endl;
+	{
+		//constructors
+		std::cout << "\t\t\tchar:";
+		test_iter_constructors(stdChar, stdFilePath);
+		test_iter_constructors(ftChar, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_iter_constructors(stdInt, stdFilePath);
+		test_iter_constructors(ftInt, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_iter_constructors(stdString, stdFilePath);
+		test_iter_constructors(ftString, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tConst Iterator:" << std::endl;
+	{
+		//constructors
+		std::cout << "\t\t\tchar:";
+		test_citer_constructors(stdChar, stdFilePath);
+		test_citer_constructors(ftChar, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_citer_constructors(stdInt, stdFilePath);
+		test_citer_constructors(ftInt, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_citer_constructors(stdString, stdFilePath);
+		test_citer_constructors(ftString, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tReverse Iterator:" << std::endl;
+	{
+		//constructors
+		std::cout << "\t\t\tchar:";
+		test_riter_constructors(stdChar, stdFilePath);
+		test_riter_constructors(ftChar, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_riter_constructors(stdInt, stdFilePath);
+		test_riter_constructors(ftInt, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_riter_constructors(stdString, stdFilePath);
+		test_riter_constructors(ftString, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tConst Reverse Iterator:" << std::endl;
+	{
+		//constructors
+		std::cout << "\t\t\tchar:";
+		test_rciter_constructors(stdChar, stdFilePath);
+		test_rciter_constructors(ftChar, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_rciter_constructors(stdInt, stdFilePath);
+		test_rciter_constructors(ftInt, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_rciter_constructors(stdString, stdFilePath);
+		test_rciter_constructors(ftString, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\toperator=:" << std::endl;
+	{
+		std::cout << "\t\tchar:";
+		test_assign_operator(stdChar, stdFilePath, 'p');
+		test_assign_operator(ftChar, ftFilePath, 'p');
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_assign_operator(stdInt, stdFilePath, 21);
+		test_assign_operator(ftInt, ftFilePath, 21);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_assign_operator(stdString, stdFilePath, "skrskrskr");
+		test_assign_operator(ftString, ftFilePath, "skrskrskr");
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tpush back=:" << std::endl;
+	{
+		std::cout << "\t\tchar:";
+		test_push_back(stdChar, stdFilePath, 'q');
+		test_push_back(ftChar, ftFilePath, 'q');
+		compareFiles(stdFilePath, ftFilePath);
+
+		std::cout << "\t\tint:";
+		test_push_back(stdInt, stdFilePath, 42);
+		test_push_back(ftInt, ftFilePath, 42);
+		compareFiles(stdFilePath, ftFilePath);
+
+		std::cout << "\t\tchar:";
+		test_push_back(stdString, stdFilePath, "fortyTwo");
+		test_push_back(ftString, ftFilePath, "fortyTwo");
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tpop_back=:" << std::endl;
+	{
+		std::cout << "\t\tchar:";
+		test_pop_back(stdChar, stdFilePath);
+		test_pop_back(ftChar, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+
+		std::cout << "\t\tint:";
+		test_pop_back(stdInt, stdFilePath);
+		test_pop_back(ftInt, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+
+		std::cout << "\t\tchar:";
+		test_pop_back(stdString, stdFilePath);
+		test_pop_back(ftString, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tresize:" << std::endl;
+	{
+		std::vector<char> sChar(5, 'a');
+		std::vector<int> sInt(5, 42);
+		std::vector<std::string> sString(5, "asshole");
+
+		ft::vector<char> ftChar(5, 'a');
+		ft::vector<int> ftInt(5, 42);
+		ft::vector<std::string> ftString (5, "asshole");
 
 		std::cout << "\t\tchar:";
 		test_resize(sChar, stdFilePath, 'q');

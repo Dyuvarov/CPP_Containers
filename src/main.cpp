@@ -1,11 +1,12 @@
 
 #include <vector>
 
-#include "test/ListTests.hpp"
+#include "test/Tests.hpp"
 
 int main()
 {
 	testList();
-	//while(1);
+	testVector();
+	while(1);
 	return 0;
 }

@@ -485,8 +485,6 @@ namespace ft {
 		}
 	};
 
-/******Non-member functions******/
-
 }
 
 
