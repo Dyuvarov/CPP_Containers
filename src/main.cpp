@@ -5,8 +5,10 @@
 
 int main()
 {
-	testList();
-	testVector();
-	while(1);
+//	testList();
+//	testVector();
+//	testStack();
+	std::pair
+//	while(1);
 	return 0;
 }

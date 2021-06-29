@@ -226,7 +226,7 @@ namespace ft {
 
 		template<class InputIt>
 		void assign(InputIt first, InputIt last,
-					typename std::enable_if<std::__is_input_iterator<InputIt>::value>::type * = 0) {
+					typename ft::enable_if<std::__is_input_iterator<InputIt>::value>::type * = 0) {
 			clear();
 			_allocator.deallocate(_data, capacity());
 			initVector(first, last, _allocator);

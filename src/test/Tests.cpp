@@ -623,8 +623,6 @@ void testList()
 }
 
 /*******VECTOR*******/
-
-
 void testVector()
 {
 	std::string stdFilePath = "Vector_std.txt";
@@ -847,4 +845,139 @@ void testVector()
 		compareFiles(stdFilePath, ftFilePath);
 		std::cout << std::endl;
 	}
+}
+
+/*******STACK*******/
+
+template<class Container>
+void test_stack_top(Container cnt, std::string filepath)
+{
+	std::ofstream out(filepath);
+	if (!out.is_open())
+		throw std::runtime_error("cant write in file!\n");
+
+	out << cnt.top() << std::endl;
+	out.close();
+}
+
+template<class Container>
+void test_stack_pop(Container cnt, std::string filepath)
+{
+	std::ofstream out(filepath);
+	if (!out.is_open())
+		throw std::runtime_error("cant write in file!\n");
+
+	while (cnt.size() > 0)
+	{
+		out << cnt.top() << std::endl;
+		cnt.pop();
+	}
+	out.close();
+}
+
+void testStack()
+{
+	std::string stdFilePath = "Vector_std.txt";
+	std::string ftFilePath = "Vector_ft.txt";
+	std::cout << "stack: " << std::endl;
+
+	std::stack<char> stdEmptyChar;
+	ft::stack<char> ftEmptyChar;
+
+	std::stack<int> stdEmptyInt;
+	ft::stack<int> ftEmptyInt;
+
+	std::stack<std::string> stdEmptyString;
+	ft::stack<std::string> ftEmptyString;
+
+	std::stack<char> stdChar;
+	stdChar.push('f');
+	stdChar.push('g');
+	stdChar.push('a');
+	stdChar.push('b');
+
+	ft::stack<char> ftChar;
+	ftChar.push('f');
+	ftChar.push('g');
+	ftChar.push('a');
+	ftChar.push('b');
+
+	std::stack<int> stdInt;
+	stdInt.push(42);
+	stdInt.push(0);
+	stdInt.push(-999);
+	stdInt.push(999999999);
+
+	ft::stack<int> ftInt;
+	ftInt.push(42);
+	ftInt.push(0);
+	ftInt.push(-999);
+	ftInt.push(999999999);
+
+	std::stack<std::string> stdString;
+	stdString.push("Hello!");
+	stdString.push("");
+	stdString.push("I am");
+	stdString.push("String");
+	stdString.push("List");
+
+	ft::stack<std::string> ftString;
+	ftString.push("Hello!");
+	ftString.push("");
+	ftString.push("I am");
+	ftString.push("String");
+	ftString.push("List");
+
+	std::cout << "\tEmpty stack:" << std::endl;
+	{
+		std::cout << "\t\tchar:";
+		test_cnt_size(stdEmptyChar, stdFilePath);
+		test_cnt_size(ftEmptyChar, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_cnt_size(stdEmptyInt, stdFilePath);
+		test_cnt_size(ftEmptyInt, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_cnt_size(stdEmptyString, stdFilePath);
+		test_cnt_size(ftEmptyString, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\ttop:" << std::endl;
+	{
+		std::cout << "\t\tchar:";
+		test_stack_top(stdChar, stdFilePath);
+		test_stack_top(ftChar, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_stack_top(stdInt, stdFilePath);
+		test_stack_top(ftInt, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_stack_top(stdString, stdFilePath);
+		test_stack_top(ftString, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tpop:" << std::endl;
+	{
+		std::cout << "\t\tchar:";
+		test_stack_pop(stdChar, stdFilePath);
+		test_stack_pop(ftChar, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_stack_pop(stdInt, stdFilePath);
+		test_stack_pop(ftInt, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_stack_pop(stdString, stdFilePath);
+		test_stack_pop(ftString, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+
 }

@@ -1,11 +1,11 @@
 #ifndef FT_CONTAINERS_STACK_HPP
 #define FT_CONTAINERS_STACK_HPP
-#include "list.hpp"
+#include "vector.hpp"
 
 namespace ft
 {
 
-template< class T, class Container = list<T> >
+template< class T, class Container = vector<T> >
 class stack
 {
 public:

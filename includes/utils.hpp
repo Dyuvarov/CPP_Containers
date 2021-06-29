@@ -7,6 +7,16 @@
 
 namespace ft
 {
+
+template <bool, class _Tp = void> struct enable_if {};
+template <class _Tp> struct enable_if<true, _Tp> {typedef _Tp type;};
+
+template <class _T1, class _T2>
+struct pair
+{
+
+};
+
 template <class InputIterator1, class InputIterator2>
 bool equal(InputIterator1 begin1, InputIterator1 end1, InputIterator2 begin2)
 {
