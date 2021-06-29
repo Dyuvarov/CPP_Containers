@@ -6,6 +6,7 @@
 #include "../../includes/list.hpp"
 #include "../../includes/vector.hpp"
 #include "../../includes/stack.hpp"
+#include "../../includes/map.hpp"
 #include "TestUtils.hpp"
 #include "Outputs.hpp"
 
