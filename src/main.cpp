@@ -8,7 +8,7 @@ int main()
 //	testList();
 //	testVector();
 //	testStack();
-	std::pair
+	std::make_pair
 //	while(1);
 	return 0;
 }
