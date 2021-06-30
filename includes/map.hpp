@@ -6,6 +6,8 @@
 #define FT_CONTAINERS_MAP_HPP
 
 #include "utils.hpp"
+#include "reversIterator.hpp"
+#include "constReverseIterator.hpp"
 namespace ft {
 
 template <class T, class nodeType>
@@ -249,8 +251,8 @@ public:
 	typedef typename Allocator::const_pointer			const_pointer;
 	typedef MapIterator<value_type, _node>				iterator;
 	typedef MapConstIterator<value_type, _node>			const_iterator;
-	typedef ReverseIterator<iterator, pointer>			reverse_iterator;
-	typedef ConstReverseIterator<iterator, pointer>		const_reverse_iterator;
+	typedef ReverseIterator<iterator, _node*>			reverse_iterator;
+	typedef ConstReverseIterator<iterator, _node*>		const_reverse_iterator;
 
 	class value_compare : public std::binary_function<value_type,value_type,bool>
 	{
@@ -268,7 +270,7 @@ public:
 
 	template< class InputIt >
 	map( InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator(),
-		 typename ft::enable_if<std::__is_input_iterator<InputIt>::value>::type* = 0)
+		 typename std::enable_if<std::__is_input_iterator<InputIt>::value>::type* = 0)
 	{
 		initMap(comp, alloc);
 		insert(first, last);
@@ -276,13 +278,13 @@ public:
 
 	map( const map& other )
 	{
-		initMap();
+		initMap(other._comp, other._alloc);
 		insert(other.begin(), other.end());
 	}
 
 	~map()
 	{
-		//TODO: clear
+		clear();
 		_nodeAlloc.destroy(_nil);
 		_nodeAlloc.deallocate(_nil, 1);
 	}
@@ -292,7 +294,7 @@ public:
 		if (*this != other)
 		{
 			map<Key, T, Compare, Allocator> tmp = map(other);
-			swap(*this, tmp);
+			swap(tmp);
 		}
 		return *this;
 	}
@@ -332,13 +334,20 @@ public:
 
 	const_iterator end() const { return const_iterator(_nil); }
 
+	reverse_iterator rbegin() { return reverse_iterator(_nil->parent); }
+
+	const_reverse_iterator rbegin() const {return const_reverse_iterator(_nil->parent); }
+
+	reverse_iterator rend() {return reverse_iterator(begin().get_p()); }
+
+	const_reverse_iterator rend() const {return const_reverse_iterator(begin().get_p); }
 	/*****CAPACITY*****/
 	bool empty() const { return _nil == _root; }
 
 	size_type size() const
 	{
 		size_type size = 0;
-		for(iterator it = begin(); it != end(); it++)
+		for(const_iterator it = begin(); it != end(); it++)
 			++size;
 		return size;
 	}
@@ -399,7 +408,7 @@ public:
 		{
 			_node* node = new_node(value, place);
 			place->left = node;
-			return ft::make_pair(iterator(node), true);
+			return iterator(node);
 		}
 		else if (_comp(place->data->_first, value._first))
 		{
@@ -429,17 +438,28 @@ public:
 	}
 
 
-	void erase( iterator pos )
+	void erase(iterator pos)
 	{
 		_node* node = pos.get_p();
-		_nodeAlloc.destroy(node);
-		_nodeAlloc.deallocate(node, 1);
+//		_nodeAlloc.destroy(node);
+//		_nodeAlloc.deallocate(node, 1);
 	}
 
 	void erase( iterator first, iterator last )
 	{
 		for (; first != last; first++)
 			erase(first);
+	}
+
+	size_type erase( const key_type& key )
+	{
+		iterator pos = findEqual(key, _root);
+		if (pos != end())
+		{
+			erase(pos);
+			return 1;
+		}
+		return 0;
 	}
 
 	void swap( map& other )
@@ -492,21 +512,7 @@ public:
 			return const_iterator(_nil);
 	}
 
-	ft::pair<iterator,iterator> equal_range( const Key& key )
-	{
-		iterator it1 = lower_bound(key);
-		iterator it2(it1);
-		if (it1 != end())
-			++it2;
-		return ft::make_pair(it1, it2);
-	}
-
-	ft::pair<const_iterator,const_iterator> equal_range( const Key& key ) const
-	{
-		return ft::make_pair(lower_bound(key), upper_bound(key));
-	}
-
-	iterator lower_bound( const Key& key )
+	iterator lower_bound(const Key& key )
 	{
 		iterator it1 = begin();
 		while (it1 != end())
@@ -526,6 +532,20 @@ public:
 				break;
 		}
 		return it1;
+	}
+
+	ft::pair<iterator,iterator> equal_range( const Key& key )
+	{
+		iterator it1 = lower_bound(key);
+		iterator it2(it1);
+		if (it1 != end())
+			++it2;
+		return ft::make_pair(it1, it2);
+	}
+
+	ft::pair<const_iterator,const_iterator> equal_range( const Key& key ) const
+	{
+		return ft::make_pair(lower_bound(key), upper_bound(key));
 	}
 
 	iterator upper_bound( const Key& key )
@@ -564,9 +584,9 @@ public:
 	friend bool operator==( const ft::map<Key,T,Compare,Allocator>& lhs,
 					 const ft::map<Key,T,Compare,Allocator>& rhs )
 	{
-		if (lhs.size() != rhs.size() || lhs._comp != rhs._comp || lhs._alloc != rhs._alloc)
+		if (lhs.size() != rhs.size() || lhs._alloc != rhs._alloc)
 			return false;
-		return equal(lhs.begin(), lhs.end(), rhs.begin());
+		return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
 	}
 
 	friend bool operator!=( const ft::map<Key,T,Compare,Allocator>& lhs,
@@ -634,7 +654,7 @@ void initMap(const Compare comp, const Allocator& alloc)
 	_nil = _root;
 }
 
-_node*	findPlace(const Key key, _node* root)
+_node*	findPlace(const Key key, _node* root) const
 {
 
 	if(_comp(key, root->data->_first))
@@ -655,7 +675,7 @@ _node*	findPlace(const Key key, _node* root)
 		return root;
 }
 
-_node*	findEqual(const Key key, _node* root)
+_node*	findEqual(const Key key, _node* root) const
 {
 	_node* place = findPlace(key, _root);
 	if (!_comp(place->data->_first, key) && !_comp(key, place->data->_first))

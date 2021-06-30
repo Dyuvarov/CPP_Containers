@@ -32,8 +32,8 @@ struct pair
 	pair( const pair& p ) : _first(p._first), _second(p._second) {}
 
 	pair& operator=(pair const& p) {
-		_first = p.first;
-		_second = p.second;
+		_first = p._first;
+		_second = p._second;
 		return *this;
 	}
 
@@ -43,6 +43,16 @@ struct pair
 		_first = other.first;
 		_second = other.second;
 		return *this;
+	}
+
+	friend bool operator==( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs )
+	{
+		return (lhs._first == rhs._first && lhs._second == rhs._second);
+	}
+
+	friend bool operator!=( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs )
+	{
+		return !(lhs == rhs);
 	}
 };
 
