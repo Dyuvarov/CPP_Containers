@@ -58,7 +58,7 @@ public:
 				prev = _p;
 				_p = _p->parent;
 			}
-			while (_p && _p->left == prev);
+			while (_p->parent && _p->left == prev);
 		}
 		return *this;
 	}
@@ -86,7 +86,7 @@ public:
 				prev = _p;
 				_p = _p->parent;
 			}
-			while (_p && _p->right == prev);
+			while (_p->parent && _p->right == prev);
 		}
 		return *this;
 	}
@@ -168,7 +168,7 @@ public:
 				prev = _p;
 				_p = _p->parent;
 			}
-			while (_p && _p->left == prev);
+			while (_p->parent && _p->left == prev);
 		}
 		return *this;
 	}
@@ -196,7 +196,7 @@ public:
 				prev = _p;
 				_p = _p->parent;
 			}
-			while (_p && _p->right == prev);
+			while (_p->parent && _p->right == prev);
 		}
 		return *this;
 	}
@@ -334,13 +334,26 @@ public:
 
 	const_iterator end() const { return const_iterator(_nil); }
 
-	reverse_iterator rbegin() { return reverse_iterator(_nil->parent); }
+	reverse_iterator rbegin()
+	{
+		_node* node = _root;
+		while (node->right)
+			node = node->right;
+		return (reverse_iterator(node));
+	}
 
-	const_reverse_iterator rbegin() const {return const_reverse_iterator(_nil->parent); }
+	const_reverse_iterator rbegin() const
+	{
+		_node* node = _root;
+		while (node->right)
+			node = node->right;
+		return (const_reverse_iterator(node));
+	}
 
-	reverse_iterator rend() {return reverse_iterator(begin().get_p()); }
+	reverse_iterator rend() {return reverse_iterator(_nil); }
 
-	const_reverse_iterator rend() const {return const_reverse_iterator(begin().get_p); }
+	const_reverse_iterator rend() const {return const_reverse_iterator(_nil); }
+
 	/*****CAPACITY*****/
 	bool empty() const { return _nil == _root; }
 
@@ -362,29 +375,22 @@ public:
 		if (_root == _nil)
 		{
 			_node* node = new_node(value, _root->parent);
-			node->right = _nil;
-			_nil->parent = node;
+			node->parent = _nil;
 			_root = node;
+			_nil->right = node;
+			_nil->left = node;
 			return ft::make_pair(iterator(node), true);
 		}
 
 		_node* place = findPlace(value._first, _root);
+		_node* node = new_node(value, place);
 		if (_comp(value._first, place->data->_first))
 		{
-			_node* node = new_node(value, place);
 			place->left = node;
 			return ft::make_pair(iterator(node), true);
 		}
 		else if (_comp(place->data->_first, value._first))
 		{
-			_node* node = new_node(value, place);
-
-			if (place->right == _nil)
-			{
-				node->right = _nil;
-				_nil->parent = node;
-			}
-
 			place->right = node;
 			return ft::make_pair(iterator(node), true);
 		}
@@ -441,23 +447,71 @@ public:
 	void erase(iterator pos)
 	{
 		_node* node = pos.get_p();
+		_node* parent = node->parent;
+		if (!parent)
+			return;
+
+		_node** place;
+		if (_comp(node->data->_first, parent->data->_first))
+			place = &parent->left;
+		else
+			place = &parent->right;
+
+		if (node->right && !node->left)
+		{
+			*place = node->right;
+			node->right->parent = parent;
+		}
+		else if (!node->right && node->left)
+		{
+			*place = node->left;
+			node->left->parent = parent;
+		}
+		else if (node->right && node->left)
+		{
+			*place = node->right;
+			node->right->parent = parent;
+			insertNode(node->left);
+		}
+		else
+			*place = 0;
+
+		if (parent == _nil)
+		{
+			if (_nil->right)
+				_nil->left = _nil->right;
+			else if (_nil->left)
+				_nil->right = _nil->left;
+		}
+		if (parent == _nil && !parent->left && !parent->right)
+			_root = _nil;
+
+		//TODO: free node
 //		_nodeAlloc.destroy(node);
 //		_nodeAlloc.deallocate(node, 1);
 	}
 
 	void erase( iterator first, iterator last )
 	{
-		for (; first != last; first++)
-			erase(first);
+		while (first != last)
+		{
+			iterator tmp(first);
+			first++;
+			erase(tmp);
+		}
 	}
 
 	size_type erase( const key_type& key )
 	{
-		iterator pos = findEqual(key, _root);
-		if (pos != end())
+		_node* node = findEqual(key, _root);
+		if (node)
 		{
-			erase(pos);
-			return 1;
+			iterator pos = iterator(node);
+			if (pos != end())
+			{
+				erase(pos);
+				return 1;
+			}
 		}
 		return 0;
 	}
@@ -647,7 +701,8 @@ void initMap(const Compare comp, const Allocator& alloc)
 	_alloc = alloc;
 
 	_root = _nodeAlloc.allocate(1);
-	_nodeAlloc.construct(_root);
+	_nodeAlloc.construct(_root, _node());
+	_root->data = _alloc.allocate(1);
 	_root->left = 0;
 	_root->right = 0;
 	_root->parent = 0;
@@ -666,7 +721,7 @@ _node*	findPlace(const Key key, _node* root) const
 	}
 	else if (_comp(root->data->_first, key))
 	{
-		if (root->right == 0 || root->right == _nil)
+		if (root->right == 0)
 			return root;
 		else
 			return findPlace(key, root->right);
@@ -682,6 +737,16 @@ _node*	findEqual(const Key key, _node* root) const
 		return place;
 	else
 		return 0;
+}
+
+void 	insertNode(_node* node)
+{
+	_node* place = findPlace(node->data->_first, _root);
+	if(_comp(node->data->_first, place->data->_first))
+		place->left = node;
+	else
+		place->right = node;
+	node->parent = place;
 }
 
 };
