@@ -285,6 +285,7 @@ public:
 	~map()
 	{
 		clear();
+		_alloc.deallocate(_nil->data, 1);
 		_nodeAlloc.destroy(_nil);
 		_nodeAlloc.deallocate(_nil, 1);
 	}
@@ -452,10 +453,17 @@ public:
 			return;
 
 		_node** place;
+		_node** place_other;
 		if (_comp(node->data->_first, parent->data->_first))
+		{
 			place = &parent->left;
+			place_other = &parent->right;
+		}
 		else
+		{
 			place = &parent->right;
+			place_other = &parent->left;
+		}
 
 		if (node->right && !node->left)
 		{
@@ -477,18 +485,12 @@ public:
 			*place = 0;
 
 		if (parent == _nil)
-		{
-			if (_nil->right)
-				_nil->left = _nil->right;
-			else if (_nil->left)
-				_nil->right = _nil->left;
-		}
-		if (parent == _nil && !parent->left && !parent->right)
-			_root = _nil;
+			*place_other = *place;
 
-		//TODO: free node
-//		_nodeAlloc.destroy(node);
-//		_nodeAlloc.deallocate(node, 1);
+		_alloc.destroy(node->data);
+		_alloc.deallocate(node->data, 1);
+		_nodeAlloc.destroy(node);
+		_nodeAlloc.deallocate(node, 1);
 	}
 
 	void erase( iterator first, iterator last )
@@ -571,8 +573,9 @@ public:
 		iterator it1 = begin();
 		while (it1 != end())
 		{
-			if (!_comp(key, it1->_first))
+			if (!_comp(it1->_first, key))
 				break;
+			++it1;
 		}
 		return it1;
 	}
@@ -584,17 +587,14 @@ public:
 		{
 			if (!_comp(key, it1->_first))
 				break;
+			++it1;
 		}
 		return it1;
 	}
 
 	ft::pair<iterator,iterator> equal_range( const Key& key )
 	{
-		iterator it1 = lower_bound(key);
-		iterator it2(it1);
-		if (it1 != end())
-			++it2;
-		return ft::make_pair(it1, it2);
+		return ft::make_pair(lower_bound(key), upper_bound(key));
 	}
 
 	ft::pair<const_iterator,const_iterator> equal_range( const Key& key ) const
@@ -609,6 +609,7 @@ public:
 		{
 			if (_comp(key, it1->_first))
 				break;
+			++it1;
 		}
 		return it1;
 	}
@@ -620,6 +621,7 @@ public:
 		{
 			if (_comp(key, it1->_first))
 				break;
+			++it1;
 		}
 		return it1;
 	}
@@ -682,6 +684,7 @@ nodeAllocator	_nodeAlloc;
 _node*			_root;
 _node*			_nil;
 Compare			_comp;
+
 
 _node* new_node(const value_type& pair, _node* parent)
 {
