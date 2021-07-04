@@ -783,7 +783,7 @@ void testVector()
 		std::cout << std::endl;
 	}
 
-	std::cout << "\tpush back=:" << std::endl;
+	std::cout << "\tpush back:" << std::endl;
 	{
 		std::cout << "\t\tchar:";
 		test_push_back(stdChar, stdFilePath, 'q');
@@ -802,7 +802,7 @@ void testVector()
 		std::cout << std::endl;
 	}
 
-	std::cout << "\tpop_back=:" << std::endl;
+	std::cout << "\tpop_back:" << std::endl;
 	{
 		std::cout << "\t\tchar:";
 		test_pop_back(stdChar, stdFilePath);
@@ -848,7 +848,6 @@ void testVector()
 }
 
 /*******STACK*******/
-
 template<class Container>
 void test_stack_top(Container cnt, std::string filepath)
 {
@@ -981,3 +980,501 @@ void testStack()
 
 
 }
+
+/*******MAP*******/
+template<class Container>
+void print_map_ft(Container& cnt, std::string filepath)
+{
+	std::ofstream out(filepath);
+	if (!out.is_open())
+		throw std::runtime_error("cant write in file!\n");
+	for (typename Container::iterator it = cnt.begin(); it != cnt.end(); it++)
+		out << it->_first << it->_second;
+	out.close();
+}
+
+template<class Container>
+void print_map_std(Container& cnt, std::string filepath)
+{
+	std::ofstream out(filepath);
+	if (!out.is_open())
+		throw std::runtime_error("cant write in file!\n");
+	for (typename Container::iterator it = cnt.begin(); it != cnt.end(); it++)
+		out << it->first << it->second;
+	out.close();
+}
+
+template<class Container>
+void test_map_clear(Container cnt, std::string filepath)
+{
+	std::ofstream out(filepath);
+	if (!out.is_open())
+		throw std::runtime_error("cant write in file!\n");
+	cnt.clear();
+	out << cnt.size() << cnt.empty();
+	out.close();
+}
+
+template<class Container>
+void test_map_erase_ft(Container cnt, std::string filepath)
+{
+	typename Container::iterator bIt = cnt.begin();
+	typename Container::iterator eIt = cnt.end();
+	bIt++;
+	eIt--;
+	eIt--;
+	cnt.erase(bIt, eIt);
+
+	print_map_ft(cnt, filepath);
+}
+
+template<class Container>
+void test_map_erase_std(Container cnt, std::string filepath)
+{
+	typename Container::iterator bIt = cnt.begin();
+	typename Container::iterator eIt = cnt.end();
+	bIt++;
+	eIt--;
+	eIt--;
+	cnt.erase(bIt, eIt);
+
+	print_map_std(cnt, filepath);
+}
+
+template<class Container>
+void test_map_count(Container cnt, std::string filepath, typename Container::key_type key)
+{
+	std::ofstream out(filepath);
+	if (!out.is_open())
+		throw std::runtime_error("cant write in file!\n");
+	out << cnt.count(key);
+	out.close();
+}
+
+template<class Container>
+void test_map_lower_bound_ft(Container cnt, std::string filepath, typename Container::key_type key)
+{
+	std::ofstream out(filepath);
+	if (!out.is_open())
+		throw std::runtime_error("cant write in file!\n");
+	typename Container::iterator it = cnt.lower_bound(key);
+	if (it != cnt.end())
+		out << it->_first << it->_second;
+	out.close();
+}
+
+template<class Container>
+void test_map_lower_bound_std(Container cnt, std::string filepath, typename Container::key_type key)
+{
+	std::ofstream out(filepath);
+	if (!out.is_open())
+		throw std::runtime_error("cant write in file!\n");
+	typename Container::iterator it = cnt.lower_bound(key);
+	if (it != cnt.end())
+		out << it->first << it->second;
+	out.close();
+}
+
+template<class Container>
+void test_map_upper_bound_ft(Container cnt, std::string filepath, typename Container::key_type key)
+{
+	std::ofstream out(filepath);
+	if (!out.is_open())
+		throw std::runtime_error("cant write in file!\n");
+	typename Container::iterator it = cnt.upper_bound(key);
+	if (it != cnt.end())
+		out << it->_first << it->_second;
+	out.close();
+}
+
+template<class Container>
+void test_map_upper_bound_std(Container cnt, std::string filepath, typename Container::key_type key)
+{
+	std::ofstream out(filepath);
+	if (!out.is_open())
+		throw std::runtime_error("cant write in file!\n");
+	typename Container::iterator it = cnt.upper_bound(key);
+	if (it != cnt.end())
+		out << it->first << it->second;
+	out.close();
+}
+
+
+void testMap()
+{
+	std::string stdFilePath = "Map_std.txt";
+	std::string ftFilePath = "Map_ft.txt";
+	std::cout << "map: " << std::endl;
+
+	std::map<char, char> stdEmptyChar;
+	ft::map<char, char> ftEmptyChar;
+
+	std::map<int, int> stdEmptyInt;
+	ft::map<int, int> ftEmptyInt;
+
+	std::map<std::string, std::string> stdEmptyString;
+	ft::map<std::string, std::string> ftEmptyString;
+
+	std::map<char, char> stdChar;
+	stdChar.insert(std::make_pair('g', 'g'));
+	stdChar.insert(std::make_pair('a', 'a'));
+	stdChar.insert(std::make_pair('b', 'b'));
+	stdChar.insert(std::make_pair('c', 'c'));
+
+	ft::map<char, char> ftChar;
+	ftChar.insert(ft::make_pair('g', 'g'));
+	ftChar.insert(ft::make_pair('a', 'a'));
+	ftChar.insert(ft::make_pair('b', 'b'));
+	ftChar.insert(ft::make_pair('c', 'c'));
+
+	std::map<int, int> stdInt;
+	stdInt.insert(std::make_pair(19, 19));
+	stdInt.insert(std::make_pair(7, 7));
+	stdInt.insert(std::make_pair(99, 99));
+	stdInt.insert(std::make_pair(0, 0));
+
+	ft::map<int, int> ftInt;
+	ftInt.insert(ft::make_pair(19, 19));
+	ftInt.insert(ft::make_pair(7, 7));
+	ftInt.insert(ft::make_pair(99, 99));
+	ftInt.insert(ft::make_pair(0, 0));
+
+	std::map<std::string, std::string> stdString;
+	stdString.insert(std::make_pair("hello", "hello"));
+	stdString.insert(std::make_pair("world", "world"));
+	stdString.insert(std::make_pair("from", "from"));
+	stdString.insert(std::make_pair("map", "map"));
+
+	ft::map<std::string, std::string> ftString;
+	ftString.insert(ft::make_pair("hello", "hello"));
+	ftString.insert(ft::make_pair("world", "world"));
+	ftString.insert(ft::make_pair("from", "from"));
+	ftString.insert(ft::make_pair("map", "map"));
+
+	std::cout << "\tEmpty map:" << std::endl;
+	{
+		std::cout << "\t\tsize:" << std::endl;
+		std::cout << "\t\t\tchar:";
+		test_cnt_size(stdEmptyChar, stdFilePath);
+		test_cnt_size(ftEmptyChar, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_cnt_size(stdEmptyInt, stdFilePath);
+		test_cnt_size(ftEmptyInt, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_cnt_size(stdEmptyString, stdFilePath);
+		test_cnt_size(ftEmptyString, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tIterator: ";
+	{
+		std::ofstream out_std(stdFilePath);
+		std::ofstream out_ft(ftFilePath);
+		if (!out_std.is_open() || !out_ft.is_open())
+			throw std::runtime_error("cant write in file!\n");
+
+		std::map<int,int> testStd;
+		ft::map<int,int> testFt;
+		for (int i = 0; i < 3; i++) {
+			int rand1 = rand();
+			int rand2 = rand();
+			std::pair<int, int> res(rand1, rand1);
+			testStd.insert(res);
+			ft::pair<int, int> resFT(rand1, rand1);
+			testFt.insert(resFT);
+		}
+		std::map<int,int>::iterator it = testStd.begin();
+		std::map<int,int>::iterator ite = testStd.end();
+		ft::map<int,int>::iterator itm = testFt.begin();
+		ft::map<int,int>::iterator item = testFt.end();
+		while (it != ite) {
+			out_std << it->first;
+			out_std << it->second;
+			it++;
+		}
+		while (itm != item) {
+			out_ft << itm->_first;
+			out_ft << itm->_second;
+			itm++;
+		}
+		out_std.close();
+		out_ft.close();
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tConst Iterator: ";
+	{
+		std::ofstream out_std(stdFilePath);
+		std::ofstream out_ft(ftFilePath);
+		if (!out_std.is_open() || !out_ft.is_open())
+			throw std::runtime_error("cant write in file!\n");
+
+		std::map<int,int> testStd;
+		ft::map<int,int> testFt;
+		for (int i = 0; i < 3; i++) {
+			int rand1 = rand();
+			int rand2 = rand();
+			std::pair<int, int> res(rand1, rand1);
+			testStd.insert(res);
+			ft::pair<int, int> resFT(rand1, rand1);
+			testFt.insert(resFT);
+		}
+		std::map<int,int>::const_iterator it = testStd.begin();
+		std::map<int,int>::const_iterator ite = testStd.end();
+		ft::map<int,int>::const_iterator itm = testFt.begin();
+		ft::map<int,int>::const_iterator item = testFt.end();
+		while (it != ite) {
+			out_std << it->first;
+			out_std << it->second;
+			it++;
+		}
+		while (itm != item) {
+			out_ft << itm->_first;
+			out_ft << itm->_second;
+			itm++;
+		}
+		out_std.close();
+		out_ft.close();
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tReverse Iterator: ";
+	{
+		std::ofstream out_std(stdFilePath);
+		std::ofstream out_ft(ftFilePath);
+		if (!out_std.is_open() || !out_ft.is_open())
+			throw std::runtime_error("cant write in file!\n");
+
+		std::map<int,int> testStd;
+		ft::map<int,int> testFt;
+		for (int i = 0; i < 3; i++) {
+			int rand1 = rand();
+			int rand2 = rand();
+			std::pair<int, int> res(rand1, rand1);
+			testStd.insert(res);
+			ft::pair<int, int> resFT(rand1, rand1);
+			testFt.insert(resFT);
+		}
+		std::map<int,int>::reverse_iterator it = testStd.rbegin();
+		std::map<int,int>::reverse_iterator ite = testStd.rend();
+		ft::map<int,int>::reverse_iterator itm = testFt.rbegin();
+		ft::map<int,int>::reverse_iterator item = testFt.rend();
+		while (it != ite) {
+			out_std << it->first;
+			out_std << it->second;
+			it++;
+		}
+		while (itm != item) {
+			out_ft << itm->_first;
+			out_ft << itm->_second;
+			itm++;
+		}
+		out_std.close();
+		out_ft.close();
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tConst Reverse Iterator: ";
+	{
+		std::ofstream out_std(stdFilePath);
+		std::ofstream out_ft(ftFilePath);
+		if (!out_std.is_open() || !out_ft.is_open())
+			throw std::runtime_error("cant write in file!\n");
+
+		std::map<int,int> testStd;
+		ft::map<int,int> testFt;
+		for (int i = 0; i < 3; i++) {
+			int rand1 = rand();
+			int rand2 = rand();
+			std::pair<int, int> res(rand1, rand1);
+			testStd.insert(res);
+			ft::pair<int, int> resFT(rand1, rand1);
+			testFt.insert(resFT);
+		}
+		std::map<int,int>::const_reverse_iterator it = testStd.rbegin();
+		std::map<int,int>::const_reverse_iterator ite = testStd.rend();
+		ft::map<int,int>::const_reverse_iterator itm = testFt.rbegin();
+		ft::map<int,int>::const_reverse_iterator item = testFt.rend();
+		while (it != ite) {
+			out_std << it->first;
+			out_std << it->second;
+			it++;
+		}
+		while (itm != item) {
+			out_ft << itm->_first;
+			out_ft << itm->_second;
+			itm++;
+		}
+		out_std.close();
+		out_ft.close();
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\toperator=:" << std::endl;
+	{
+		std::cout << "\t\tchar:";
+		std::map<char, char> stdTmpCharMap = stdChar;
+		ft::map<char, char> ftTmpCharMap = ftChar;
+		print_map_std(stdTmpCharMap, stdFilePath);
+		print_map_ft(ftTmpCharMap, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		std::map<int, int> stdTmpIntMap = stdInt;
+		ft::map<int, int> ftTmpIntMap = ftInt;
+		print_map_std(stdTmpIntMap, stdFilePath);
+		print_map_ft(ftTmpIntMap, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		std::map<std::string, std::string> stdTmpStringMap = stdString;
+		ft::map<std::string, std::string> ftTmpStringMap = ftString;
+		print_map_std(stdTmpStringMap, stdFilePath);
+		print_map_ft(ftTmpStringMap, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tinsert:" << std::endl;
+	{
+		std::cout << "\t\tchar:";
+		print_map_std(stdChar, stdFilePath);
+		print_map_ft(ftChar, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		print_map_std(stdInt, stdFilePath);
+		print_map_ft(ftInt, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		print_map_std(stdString, stdFilePath);
+		print_map_ft(ftString, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tsize:" << std::endl;
+	{
+		std::cout << "\t\t\tchar:";
+		test_cnt_size(stdChar, stdFilePath);
+		test_cnt_size(ftChar, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_cnt_size(stdInt, stdFilePath);
+		test_cnt_size(ftInt, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_cnt_size(stdString, stdFilePath);
+		test_cnt_size(ftString, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\terase:" << std::endl;
+	{
+		std::cout << "\t\t\tchar:";
+		test_map_erase_std(stdChar, stdFilePath);
+		test_map_erase_ft(ftChar, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_map_erase_std(stdInt, stdFilePath);
+		test_map_erase_ft(ftInt, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_map_erase_std(stdString, stdFilePath);
+		test_map_erase_ft(ftString, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tcount:" << std::endl;
+	{
+		std::cout << "\t\t\tchar:";
+		test_map_count(stdChar, stdFilePath, 'a');
+		test_map_count(stdChar, stdFilePath, '*');
+		test_map_count(ftChar, ftFilePath, 'a');
+		test_map_count(ftChar, ftFilePath, '*');
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_map_count(stdInt, stdFilePath, 0);
+		test_map_count(stdInt, stdFilePath, 666);
+		test_map_count(ftInt, ftFilePath, 0);
+		test_map_count(ftInt, ftFilePath, 666);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_map_count(stdString, stdFilePath, "YO");
+		test_map_count(stdString, stdFilePath, "hello");
+		test_map_count(ftString, ftFilePath, "YO");
+		test_map_count(ftString, ftFilePath, "hello");
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tlower_bound:" << std::endl;
+	{
+		std::cout << "\t\t\tchar:";
+		test_map_lower_bound_std(stdChar, stdFilePath, 'a');
+		test_map_lower_bound_std(stdChar, stdFilePath, '*');
+		test_map_lower_bound_ft(ftChar, ftFilePath, 'a');
+		test_map_lower_bound_ft(ftChar, ftFilePath, '*');
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_map_lower_bound_std(stdInt, stdFilePath, 0);
+		test_map_lower_bound_std(stdInt, stdFilePath, 666);
+		test_map_lower_bound_ft(ftInt, ftFilePath, 0);
+		test_map_lower_bound_ft(ftInt, ftFilePath, 666);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_map_lower_bound_std(stdString, stdFilePath, "YO");
+		test_map_lower_bound_std(stdString, stdFilePath, "hello");
+		test_map_lower_bound_ft(ftString, ftFilePath, "YO");
+		test_map_lower_bound_ft(ftString, ftFilePath, "hello");
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tupper_bound:" << std::endl;
+	{
+		std::cout << "\t\t\tchar:";
+		test_map_upper_bound_std(stdChar, stdFilePath, 'a');
+		test_map_upper_bound_std(stdChar, stdFilePath, '*');
+		test_map_upper_bound_ft(ftChar, ftFilePath, 'a');
+		test_map_upper_bound_ft(ftChar, ftFilePath, '*');
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_map_upper_bound_std(stdInt, stdFilePath, 0);
+		test_map_upper_bound_std(stdInt, stdFilePath, 666);
+		test_map_upper_bound_ft(ftInt, ftFilePath, 0);
+		test_map_upper_bound_ft(ftInt, ftFilePath, 666);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_map_upper_bound_std(stdString, stdFilePath, "YO");
+		test_map_upper_bound_std(stdString, stdFilePath, "hello");
+		test_map_upper_bound_ft(ftString, ftFilePath, "YO");
+		test_map_upper_bound_ft(ftString, ftFilePath, "hello");
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+
+	std::cout << "\tclear:" << std::endl;
+	{
+		std::cout << "\t\t\tchar:";
+		test_map_clear(stdChar, stdFilePath);
+		test_map_clear(ftChar, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tint:";
+		test_map_clear(stdInt, stdFilePath);
+		test_map_clear(ftInt, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << "\tstring:";
+		test_map_clear(stdString, stdFilePath);
+		test_map_clear(ftString, ftFilePath);
+		compareFiles(stdFilePath, ftFilePath);
+		std::cout << std::endl;
+	}
+}
+
