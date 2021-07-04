@@ -1180,7 +1180,6 @@ void testMap()
 		ft::map<int,int> testFt;
 		for (int i = 0; i < 3; i++) {
 			int rand1 = rand();
-			int rand2 = rand();
 			std::pair<int, int> res(rand1, rand1);
 			testStd.insert(res);
 			ft::pair<int, int> resFT(rand1, rand1);
@@ -1217,7 +1216,6 @@ void testMap()
 		ft::map<int,int> testFt;
 		for (int i = 0; i < 3; i++) {
 			int rand1 = rand();
-			int rand2 = rand();
 			std::pair<int, int> res(rand1, rand1);
 			testStd.insert(res);
 			ft::pair<int, int> resFT(rand1, rand1);
@@ -1254,7 +1252,6 @@ void testMap()
 		ft::map<int,int> testFt;
 		for (int i = 0; i < 3; i++) {
 			int rand1 = rand();
-			int rand2 = rand();
 			std::pair<int, int> res(rand1, rand1);
 			testStd.insert(res);
 			ft::pair<int, int> resFT(rand1, rand1);
@@ -1291,7 +1288,6 @@ void testMap()
 		ft::map<int,int> testFt;
 		for (int i = 0; i < 3; i++) {
 			int rand1 = rand();
-			int rand2 = rand();
 			std::pair<int, int> res(rand1, rand1);
 			testStd.insert(res);
 			ft::pair<int, int> resFT(rand1, rand1);

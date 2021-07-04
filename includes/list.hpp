@@ -215,7 +215,7 @@ public:
 				  const Alloc &alloc = Alloc())
 			: _alloc(alloc) {
 		initList(_alloc);
-		for (int i = 0; i < count; i++)
+		for (size_type i = 0; i < count; i++)
 			push_back(value);
 	}
 

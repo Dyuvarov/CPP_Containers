@@ -423,7 +423,7 @@ namespace ft {
 		}
 
 		void fill(size_type start, size_type finish, value_type value) {
-			for (size_type i = 0; i <= finish; i++)
+			for (size_type i = start; i <= finish; i++)
 				_data[i] = value;
 		}
 
@@ -440,9 +440,8 @@ namespace ft {
 		}
 
 		friend bool operator==(const ft::vector<T, allocator_type> &lhs,
-							   const ft::vector<T, allocator_type> &rhs) {
-			typedef typename ft::vector<T, allocator_type>::size_type size_type;
-
+							   const ft::vector<T, allocator_type> &rhs)
+		{
 			if (lhs._size != rhs._size || lhs._capacity != rhs.capacity() || lhs._allocator != rhs._allocator)
 				return false;
 

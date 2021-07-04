@@ -741,6 +741,7 @@ _node*	findPlace(const Key key, _node* root) const
 
 _node*	findEqual(const Key key, _node* root) const
 {
+	(void) root;
 	_node* place = findPlace(key, _root);
 	if (!_comp(place->data->_first, key) && !_comp(key, place->data->_first))
 		return place;
