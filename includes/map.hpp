@@ -292,7 +292,7 @@ public:
 
 	map& operator=( const map& other )
 	{
-		if (*this != other)
+		if (this != &other)
 		{
 			map<Key, T, Compare, Allocator> tmp = map(other);
 			swap(tmp);
@@ -384,14 +384,15 @@ public:
 		}
 
 		_node* place = findPlace(value._first, _root);
-		_node* node = new_node(value, place);
 		if (_comp(value._first, place->data->_first))
 		{
+			_node* node = new_node(value, place);
 			place->left = node;
 			return ft::make_pair(iterator(node), true);
 		}
 		else if (_comp(place->data->_first, value._first))
 		{
+			_node* node = new_node(value, place);
 			place->right = node;
 			return ft::make_pair(iterator(node), true);
 		}
@@ -403,10 +404,10 @@ public:
 		_node* local_root = hint.get_p();
 		if (local_root == _nil)
 		{
-			_node* node = new_node(value, _root->parent);
-			node->right = _nil;
-			_nil->parent = node;
+			_node* node = new_node(value, _nil);
 			_root = node;
+			_nil->right = node;
+			_nil->left = node;
 			return iterator(node);
 		}
 
@@ -485,7 +486,12 @@ public:
 			*place = 0;
 
 		if (parent == _nil)
+		{
 			*place_other = *place;
+			_root = _nil->right;
+		}
+		if (_nil->left == 0 && _nil->right == 0)
+			_root = _nil;
 
 		_alloc.destroy(node->data);
 		_alloc.deallocate(node->data, 1);
